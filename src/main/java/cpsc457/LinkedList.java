@@ -223,7 +223,7 @@ public class LinkedList<T> implements Iterable<T> {
 				this.append(sortedList[i]);
 			}*/
 
-			int length = list.size();
+			// int length = list.size();
 
 		}
 
