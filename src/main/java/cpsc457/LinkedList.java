@@ -92,17 +92,21 @@ public class LinkedList<T> implements Iterable<T> {
 	//Adds a new node to the list at the end (tail)
     public LinkedList<T> append(T t) {
     LinkedNode<T> t_node = new LinkedNode(t);
+
 		//Check if it is empty
-    if (isEmpty() == true) {
+    if (t == null){
+				//System.out.println("null list");
+		} else if (isEmpty() == true) {
       	//head = tail = t
        head = t_node;
-       tail = t_node;
+       tail = head;
      }
      //Else add to the tail and move the tail to the end
     //tail.next = t    then		tail = t
      else {
        tail.next = t_node;
-       tail = t_node;
+			 tail = tail.next;
+       //tail = t_node;
      }
 		//Do not forget to increment the size by 1 (if you have it as an attribute)
     return this;
@@ -140,7 +144,7 @@ public class LinkedList<T> implements Iterable<T> {
 	//Sorts the link list in serial
     private void sort(Comparator<T> comp) {
 
-	//	new MergeSort<T>(comp).sort(this); //Run this within the critical section (as discussed before)
+		new MergeSort<T>(comp).sort(this); //Run this within the critical section (as discussed before)
 
 		//It might not allow you to use this inside critical
 			//Create a final pointer = this then use that pointer
@@ -148,7 +152,7 @@ public class LinkedList<T> implements Iterable<T> {
 
 	//Sorts the link list in parallel (using multiple threads)
     private void par_sort(Comparator<T> comp) {
-	//	new MergeSort<T>(comp).parallel_sort(this); //Run this within the critical section (as discussed before)
+		//new MergeSort<T>(comp).parallel_sort(this); //Run this within the critical section (as discussed before)
     }
 
 	//Merge sort
@@ -162,8 +166,9 @@ public class LinkedList<T> implements Iterable<T> {
 		final Comparator<T> comp;
 
 		//Constructor
-		private Comparator<T> MergeSort(Comparator<T> comp) {
-			Comparator<T> new_comp;
+		private MergeSort(Comparator<T> comp) {
+			this.comp = comp;
+	/*		Comparator<T> new_comp;
 			int comp_length = comp.length; //??
 			int midpoint;
 
@@ -201,7 +206,7 @@ public class LinkedList<T> implements Iterable<T> {
 				}
 
 				return(new_comp);
-			}
+			}*/
 		}
 		//#####################
 		//# Sorting functions #
@@ -211,12 +216,15 @@ public class LinkedList<T> implements Iterable<T> {
 		//attributes (head and tail pointers)
 
 		public void sort(LinkedList<T> list) {
-			length = list.length();
+			/*int length = list.size();
 			sortedList = MergeSort(list);
 			this.clear(); // Clear the current linked list so we can put in the sorted one
 			for (int i = 0; i < sortedList.length(); i++){
 				this.append(sortedList[i]);
-			}
+			}*/
+
+			int length = list.size();
+
 		}
 
 		public void parallel_sort(LinkedList<T> list) {
