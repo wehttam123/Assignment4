@@ -98,7 +98,6 @@ public class LinkedList<T> implements Iterable<T> {
       	//head = tail = t
        head = t_node;
        tail = head;
-			 System.out.println("herrre!");
      }
      //Else add to the tail and move the tail to the end
     //tail.next = t    then		tail = t
@@ -115,17 +114,14 @@ public class LinkedList<T> implements Iterable<T> {
     public T get(int index) {
 			LinkedNode<T> curr = head;
 			if(curr == null){
-				System.out.println(">??");
 				return(null);
 			}
 			for (int i = 0; i < size(); i++){
 				if (i == index){
-					System.out.println("I am returning:" + curr.data);
 					return(curr.data);
 				}
 				else { curr = curr.next; }
 			}
-			System.out.println("@");
 			return(null);
 		//Iterate through the list
 			//Create a new pointer that starts at the head
@@ -157,7 +153,7 @@ public class LinkedList<T> implements Iterable<T> {
 
 	//Sorts the link list in parallel (using multiple threads)
     private void par_sort(Comparator<T> comp) {
-		//new MergeSort<T>(comp).parallel_sort(this); //Run this within the critical section (as discussed before)
+		new MergeSort<T>(comp).parallel_sort(this); //Run this within the critical section (as discussed before)
     }
 
 	//Merge sort
@@ -173,45 +169,6 @@ public class LinkedList<T> implements Iterable<T> {
 		//Constructor
 		private MergeSort(Comparator<T> comp) {
 			this.comp = comp;
-	/*		Comparator<T> new_comp;
-			int comp_length = comp.length; //??
-			int midpoint;
-
-			// If the length is 2 then we do the comparison //
-			if (comp_legnth == 2) {
-				T first = comp[0];
-				T second = comp[0];
-				 	 if (first.compareTo(second) < 0){ //  if comp[0] is less than comp[1]
-						 // then we swap them //
-						 new_comp[0] = second;
-						 new_comp[1] = first;
-					 }
-					return(new_comp);
-			}
-			// Otherwise we continue splitting the list
-			else {
-			  if (list_size % 2 == 0) { midpoint = list_size / 2; } // If the size is even then we simply divide the list evenly
-				else { midpoint = (list_size / 2) + 1; } // Otherwise we must divide it unevenly
-
-				for (int i = 0; i < midpoint; i++) { // Create the left side
-					left_list.append(comp[i]);
-				}
-
-				for (int i = midpoint; i < comp.size(); i++) { // Create the right side
-					right_list.append(comp[i]);
-				}
-				// Here we sort each side //
-				left_list = MergeSort(left_list);
-				right_list = MergeSort(right_list);
-
-				// Now we merge the two sorted lists back together //
-				new_comp = left_list;
-				for (int i = midpoint; i < comp.size(); i++) {
-					new_comp.append(right_list[i]);
-				}
-
-				return(new_comp);
-			}*/
 		}
 		//#####################
 		//# Sorting functions #
@@ -221,19 +178,14 @@ public class LinkedList<T> implements Iterable<T> {
 		//attributes (head and tail pointers)
 
 		public void sort(LinkedList<T> list) {
-			/*int length = list.size();
-			sortedList = MergeSort(list);
-			this.clear(); // Clear the current linked list so we can put in the sorted one
-			for (int i = 0; i < sortedList.length(); i++){
-				this.append(sortedList[i]);
-			}*/
+
 			int midpoint;
+			int result;
 			LinkedList<T> left_list = new LinkedList<T>();
 			LinkedList<T> right_list = new LinkedList<T>();
 
 
 			if(list.size() == 1) {
-				System.out.println("Size of 1");
 			}
 				//return (list);
 			else {
@@ -248,36 +200,44 @@ public class LinkedList<T> implements Iterable<T> {
 					right_list.append(list.get(i));
 				}
 
+
 				// Here we sort each side //
 				sort(left_list);
 				sort(right_list);
 
+
 				int list_size = list.size();
-				System.out.println("List size: " + list_size);
 				list.clear();
 
 				for (int i = 0; i < list_size; i++){
-					System.out.println("I am looping for the " + i);
 					T leftPointer = left_list.get(0);
-					System.out.println("I got here!");
 					T rightPointer = right_list.get(0);
-					System.out.println("not here");
+
 				 // compare //
-				 int result = comp.compare(leftPointer,rightPointer);//(leftPointer.data).compareTo(rightPointer.data);
-				 System.out.println("Result: " + result);
-				 if (result <= 0) {
-					 list.append(leftPointer);
-					 System.out.println("Stuck @ .head");
-					 left_list.head = left_list.head.next;
-					 System.out.println("did i get here?");
-				 } else {
+				 if ((leftPointer == null) || (rightPointer == null)){ // If one of the lists is empty we can't compare the heads so we simply make result 0
+					 result = 0;
+				 }
+				 else { result = comp.compare(leftPointer,rightPointer); } // Otherwise we compare the heads of the two lists
+
+				 if (left_list.size() == 0) { // If the left list is empty we take the right lists head
 					 list.append(rightPointer);
-					 System.out.println("Stuck @ .head");
 					 right_list.head = right_list.head.next;
-					 System.out.println("did i get here?");
+				 }
+				 else if (right_list.size() == 0) { // If the right list is empty we take the left lists head
+					// System.out.println("Working?");
+					 list.append(leftPointer);
+					 left_list.head = left_list.head.next;
+				 }
+				 else if (result <= 0) { // If the left lists head was smaller we take the left lists head
+					 list.append(leftPointer);
+					 left_list.head = left_list.head.next;
+				 }
+
+				 else if (result > 0) { // Otherwise we take the right lists head
+					 list.append(rightPointer);
+					 right_list.head = right_list.head.next;
 				 }
 				}
-
 		}
 }
 		public void parallel_sort(LinkedList<T> list) {
