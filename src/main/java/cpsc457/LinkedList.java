@@ -94,7 +94,7 @@ public class LinkedList<T> implements Iterable<T> {
     LinkedNode<T> t_node = new LinkedNode(t);
 
 		//Check if it is empty
-		if (isEmpty() == true) {
+	  if ((isEmpty() == true) && (t != null)) {
       	//head = tail = t
        head = t_node;
        tail = head;
@@ -185,9 +185,12 @@ public class LinkedList<T> implements Iterable<T> {
 			LinkedList<T> left_list = new LinkedList<T>();
 			LinkedList<T> right_list = new LinkedList<T>();
 
-			long s = System.currentTimeMillis();
+	//		long s = System.currentTimeMillis();
+			if(list.size() == 0) {
 
-			if(list.size() == 1) {
+			}
+
+			else if(list.size() == 1) {
 			}
 				//return (list);
 			else {
@@ -203,15 +206,15 @@ public class LinkedList<T> implements Iterable<T> {
 					right_list.append(list.get(i));
 				}
 
-				long sd = System.currentTimeMillis();
+			//	long sd = System.currentTimeMillis();
 
 
 				// Here we sort each side //
 				sort(left_list);
 				sort(right_list);
 
-				long ed = System.currentTimeMillis();
-				System.out.println("recurs" + (ed-sd));
+			//	long ed = System.currentTimeMillis();
+				//System.out.println("recurs" + (ed-sd));
 
 				int list_size = list.size();
 
@@ -219,30 +222,30 @@ public class LinkedList<T> implements Iterable<T> {
 
 
 
-				long sl = System.currentTimeMillis();
+		//		long sl = System.currentTimeMillis();
 
 
 				for (int i = 0; i < list_size; i++){
 
-					long sg = System.nanoTime();
+			//		long sg = System.nanoTime();
 
 					T leftPointer = left_list.get(0);
 					T rightPointer = right_list.get(0);
 
-					long eg = System.nanoTime();
-					System.out.println("gets" + (eg-sg));
+				//	long eg = System.nanoTime();
+				//	System.out.println("gets" + (eg-sg));
 
-					long sf = System.nanoTime();
+				//	long sf = System.nanoTime();
 				 // compare //
 				 if ((leftPointer == null) || (rightPointer == null)){ // If one of the lists is empty we can't compare the heads so we simply make result 0
 					 result = 0;
 				 }
 				 else { result = comp.compare(leftPointer,rightPointer); } // Otherwise we compare the heads of the two lists
 
-				 long ef = System.nanoTime();
-				 System.out.println("if" + (ef-sf));
+			//	 long ef = System.nanoTime();
+				// System.out.println("if" + (ef-sf));
 
-				 long ssf = System.nanoTime();
+			//	 long ssf = System.nanoTime();
 				 if (left_list.size() == 0) { // If the left list is empty we take the right lists head
 					 list.append(rightPointer);
 					 right_list.head = right_list.head.next;
@@ -261,15 +264,15 @@ public class LinkedList<T> implements Iterable<T> {
 					 list.append(rightPointer);
 					 right_list.head = right_list.head.next;
 				 }
-				 long esf = System.nanoTime();
-				 System.out.println("sif" + (esf-ssf));
+			//	 long esf = System.nanoTime();
+				// System.out.println("sif" + (esf-ssf));
 				}
 
-				long el = System.currentTimeMillis();
-				System.out.println("loop" + (el-sl));
+		//		long el = System.currentTimeMillis();
+			//	System.out.println("loop" + (el-sl));
 		}
-		long e = System.currentTimeMillis();
-		System.out.println("efjwep" + (e-s));
+	//	long e = System.currentTimeMillis();
+	//	System.out.println("efjwep" + (e-s));
 	}
 
 		public void parallel_sort(LinkedList<T> list) {

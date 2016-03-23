@@ -16,53 +16,59 @@ public class RandomTests {
     public void test_a_big_random_list() throws Exception {
         Random r = new Random();
         LinkedList<Integer> list = new LinkedList<Integer>();
+
+        /*
         list.append(3);
         list.append(2);
-       list.append(1);
+        list.append(1);
         list.append(21);
         list.append(1);
-      long start = System.currentTimeMillis();
-       for(int i=0; i<2000; i++) {
+
+        */
+
+        long start = System.currentTimeMillis();
+       for(int i=0; i<1e3; i++) {
             list.append(r.nextInt());
-            //System.out.println(i);
         }
 
-  /*    System.out.println("===Starting List===");
+/*
+      System.out.println("===Starting List===");
         for(int i = 0; i<list.size(); i++){
           System.out.println(list.get(i));
         }
+
 */
+      LinkedList.sort(list);
+      long end = System.currentTimeMillis();
 
-       LinkedList.sort(list);
-        long end = System.currentTimeMillis();
-
-    /*    System.out.println("===Sorted List===");
+/*        System.out.println("===Sorted List===");
         for(int i = 0; i<list.size(); i++){
          System.out.println(list.get(i));
-      } */
-
+      }
+*/
         System.err.println();
         System.err.println("Processors: "+Runtime.getRuntime().availableProcessors());
         System.err.println(end - start + " ms");
         System.err.println();
 
-        int i = 0;
         Integer prev = Integer.MIN_VALUE;
 
 	// fyi: this style of for loop use the result of getIterator()
 	//   hence the initial NullPointerException
-        for(Integer num : list) {
-            assertTrue(num + " found before " + prev + " at index " + i, num >= prev);
-            prev = num;
-            i++;
+        //for(Integer num : list) {
+        for (int i = 0; i<list.size(); i++){
+
+            assertTrue(list.get(i) + " found before " + prev + " at index " + i, list.get(i) >= prev);
+            prev = list.get(i);
         }
+
     }
 
 
     // these tests are primarilly (but not exclusively)
     // how we will evaluate the correctness of your code
 
-/*
+
     @Test
     public void sort_lots_of_small_random_lists_in_serial() {
         Random r = new Random();
@@ -77,18 +83,17 @@ public class RandomTests {
                 list.append(rval);
             }
 
-            //LinkedList.sort(list);
+            LinkedList.sort(list);
 
-            int i = 0;
             Integer prev = Integer.MIN_VALUE;
-            for (Integer num : list) {
-                if(num < prev) {
+            for (int i=0; i<list.size(); i++) {
+                if(list.get(i) < prev) {
                     dumpTest(input);
-                    assertTrue(num + " found before " + prev + " at index " + i, num >= prev);
+                    assertTrue(list.get(i) + " found before " + prev + " at index " + i, list.get(i) >= prev);
                 }
 
-                prev = num;
-                i++;
+                prev = list.get(i);
+
             }
         }
     }
@@ -104,13 +109,11 @@ public class RandomTests {
             list.append(input[i]);
         }
 
-        //LinkedList.sort(list);
-
-        int i = 0;
+        LinkedList.sort(list);
         Integer prev = Integer.MIN_VALUE;
-        for (Integer num : list) {
-            assertTrue(num + " found before " + prev + " at index " + i, num >= prev);
-            prev = num;
+        for (int i = 0; i<list.size(); i++) {
+            assertTrue(list.get(i) + " found before " + prev + " at index " + i, list.get(i) >= prev);
+            prev = list.get(i);
             i++;
         }
     }
@@ -142,5 +145,5 @@ public class RandomTests {
         System.out.println(buf.toString());
     }
 
-*/
+
 }
