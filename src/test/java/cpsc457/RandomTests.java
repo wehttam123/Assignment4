@@ -16,28 +16,30 @@ public class RandomTests {
     public void test_a_big_random_list() throws Exception {
         Random r = new Random();
         LinkedList<Integer> list = new LinkedList<Integer>();
-        list.append(3);
-        list.append(2);
-        list.append(21);
-        list.append(21);
-        list.append(1);
+      //  list.append(3);
+      //  list.append(2);
+      //  list.append(1);
+      //  list.append(21);
+        //list.append(1);
 
-      /*  for(int i=0; i<6; i++) {
+        for(int i=0; i<2000; i++) {
             list.append(r.nextInt());
-        } */
-        System.out.println("===Starting List===");
-        for(int i = 0; i<list.size(); i++){
-          System.out.println(list.get(i));
-        } 
-        long start = System.currentTimeMillis();
-        LinkedList.sort(list);
-        long end = System.currentTimeMillis();
-
-        System.out.println("===Sorted List===");
+            //System.out.println(i);
+        }
+/*      System.out.println("===Starting List===");
         for(int i = 0; i<list.size(); i++){
           System.out.println(list.get(i));
         }
-
+*/
+        long start = System.currentTimeMillis();
+        LinkedList.sort(list);
+        long end = System.currentTimeMillis();
+/*
+        System.out.println("===Sorted List===");
+        for(int i = 0; i<list.size(); i++){
+         System.out.println(list.get(i));
+      }
+*/
         System.err.println();
         System.err.println("Processors: "+Runtime.getRuntime().availableProcessors());
         System.err.println(end - start + " ms");

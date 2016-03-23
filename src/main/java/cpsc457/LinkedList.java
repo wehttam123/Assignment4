@@ -239,10 +239,88 @@ public class LinkedList<T> implements Iterable<T> {
 				 }
 				}
 		}
-}
-		public void parallel_sort(LinkedList<T> list) {
-		}
+	}
 
+		public void parallel_sort(LinkedList<T> list) {
+			ExecutorService executorService = Executors.newFixedThreadPool(2);
+			int midpoint;
+			int result;
+			LinkedList<T> left_list = new LinkedList<T>();
+			LinkedList<T> right_list = new LinkedList<T>();
+
+
+			if(list.size() == 1) {
+			}
+				//return (list);
+			else {
+				if (list.size() % 2 == 0) { midpoint = list.size() / 2; } // If the size is even then we simply divide the list evenly
+				else { midpoint = (list.size() / 2) + 1; } // Otherwise we must divide it unevenly
+
+				for (int i = 0; i < midpoint; i++) { // Create the left side
+					left_list.append(list.get(i));
+				}
+
+				for (int i = midpoint; i < list.size(); i++) { // Create the right side
+					right_list.append(list.get(i));
+				}
+
+
+			executorService.execute(new Runnable() {
+			    public void run() {
+			        sort(left_list);
+							//right_list.sort();
+			    }
+			});
+
+
+
+			executorService.execute(new Runnable() {
+			    public void run() {
+			        //left_list.sort();
+							sort(right_list);
+			    }
+			});
+
+
+
+			int list_size = list.size();
+			list.clear();
+
+			for (int i = 0; i < list_size; i++){
+				T leftPointer = left_list.get(0);
+				T rightPointer = right_list.get(0);
+
+			 // compare //
+			 if ((leftPointer == null) || (rightPointer == null)){ // If one of the lists is empty we can't compare the heads so we simply make result 0
+				 result = 0;
+			 }
+			 else { result = comp.compare(leftPointer,rightPointer); } // Otherwise we compare the heads of the two lists
+
+			 if (left_list.size() == 0) { // If the left list is empty we take the right lists head
+				 list.append(rightPointer);
+				 right_list.head = right_list.head.next;
+			 }
+			 else if (right_list.size() == 0) { // If the right list is empty we take the left lists head
+				// System.out.println("Working?");
+				 list.append(leftPointer);
+				 left_list.head = left_list.head.next;
+			 }
+			 else if (result <= 0) { // If the left lists head was smaller we take the left lists head
+				 list.append(leftPointer);
+				 left_list.head = left_list.head.next;
+			 }
+
+			 else if (result > 0) { // Otherwise we take the right lists head
+				 list.append(rightPointer);
+				 right_list.head = right_list.head.next;
+			 }
+			}
+	}
+
+executorService.shutdown();
+	}
+}
+}
 		//#########
 		//# Steps #
 		//#########
@@ -264,7 +342,3 @@ public class LinkedList<T> implements Iterable<T> {
 
 			//4- Once one of the two lists is done, append the rest of the
 			//	 second list to the tail of the new merged link list
-	}
-
-
-}
