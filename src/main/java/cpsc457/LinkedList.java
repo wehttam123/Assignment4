@@ -46,6 +46,7 @@ public class LinkedList<T> implements Iterable<T> {
 		private LinkedNode<T> tail;//Tail
 		//Size (not required)
 		//Critical Section
+		private final Lock _mutex = new ReentrantLock(true);
 
 	//Constructor
     public LinkedList() {
@@ -58,13 +59,16 @@ public class LinkedList<T> implements Iterable<T> {
 
 	//Returns the size of the list
     public int size() {
+				_mutex.lock();
         int size = 0;
         LinkedNode<T> curr = head;
         while (curr != null) { // Iterates through the list until we reach a null node
           size++;
           curr = curr.next;
         }
+				_mutex.unlock();
         return (size);
+
 
          //either iterate through all the list and count
 					//or create an attribute that stores the size and changes
@@ -73,14 +77,17 @@ public class LinkedList<T> implements Iterable<T> {
 
 	//Checks if the list is empty
 	public boolean isEmpty() {
-      if (size() == 0) { return(true); } //size == 0
-      else { return(false); }
+			_mutex.lock();
+      if (size() == 0) { _mutex.unlock(); return(true); } //size == 0
+      else { _mutex.unlock(); return(false); }
     }
 
 	//Deletes all the nodes in the list
 	public void clear() {
+		_mutex.lock();
 		head = null;
 		tail = null;
+		_mutex.unlock();
 		//just set the head and tail to null (the garbage collector takes care of the rest)
 			//cpp developers: be careful, you have to destroy them first
 
@@ -91,6 +98,7 @@ public class LinkedList<T> implements Iterable<T> {
 
 	//Adds a new node to the list at the end (tail)
     public LinkedList<T> append(T t) {
+			_mutex.lock();
     LinkedNode<T> t_node = new LinkedNode(t);
 
 		//Check if it is empty
@@ -108,21 +116,26 @@ public class LinkedList<T> implements Iterable<T> {
        //tail = t_node;
      }
 		//Do not forget to increment the size by 1 (if you have it as an attribute)
+		_mutex.unlock();
     return this;
+
     }
 
 	//Gets a node's value at a specific index
     public T get(int index) {
+			_mutex.lock();
 			LinkedNode<T> curr = head;
 			if(curr == null){
 				return(null);
 			}
 			for (int i = 0; i < size(); i++){
 				if (i == index){
+					_mutex.unlock();
 					return(curr.data);
 				}
 				else { curr = curr.next; }
 			}
+			_mutex.unlock();
 			return(null);
 		//Iterate through the list
 			//Create a new pointer that starts at the head
@@ -134,7 +147,29 @@ public class LinkedList<T> implements Iterable<T> {
 
 	@Override
     public Iterator<T> iterator() {
-		return null;
+		return new Iterator<T>() {
+			private LinkedNode<T> iter = head;
+              public boolean hasNext(){
+				  if (iter.next != null){
+					  return true;
+				  } else {
+					  return false;
+				  }
+            }
+            public T next(){
+				if (hasNext()) {
+					iter = iter.next;
+					return iter.data;
+					} else {
+						iter = head;
+						return null;
+						}
+            }
+
+            public void remove(){
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
 	//The next two functions, are being called by the static functions at the top of this page
@@ -154,7 +189,8 @@ public class LinkedList<T> implements Iterable<T> {
 
 	//Sorts the link list in parallel (using multiple threads)
     private void par_sort(Comparator<T> comp) {
-		new MergeSort<T>(comp).parallel_sort(this); //Run this within the critical section (as discussed before)
+		new MergeSort<T>(comp).parallel_sort(this); //Run this within the critical section
+		//executorService.shutdown();
     }
 
 	//Merge sort
@@ -165,7 +201,7 @@ public class LinkedList<T> implements Iterable<T> {
 			//Depth limit
 			int pool_size = 2;
 			int num_threads = 0;
-
+			ExecutorService executorService = Executors.newFixedThreadPool(pool_size);
 
 			private final Lock _mutex = new ReentrantLock(true);
 
@@ -190,7 +226,6 @@ public class LinkedList<T> implements Iterable<T> {
 			LinkedList<T> left_list = new LinkedList<T>();
 			LinkedList<T> right_list = new LinkedList<T>();
 
-	//		long s = System.currentTimeMillis();
 			if(list.size() == 0) {
 
 			}
@@ -202,6 +237,17 @@ public class LinkedList<T> implements Iterable<T> {
 				if (list.size() % 2 == 0) { midpoint = list.size() / 2; } // If the size is even then we simply divide the list evenly
 				else { midpoint = (list.size() / 2) + 1; } // Otherwise we must divide it unevenly
 
+				int  j = 0;
+				/*Integer curr = newInteger((int)list.get(0));
+				for(Integer num : list) {
+					if (j < midpoint){
+						left_list.append(curr);
+					} else {
+						right_list.append(curr);
+					}
+					curr = num;
+					j++;
+				}*/
 				for (int i = 0; i < midpoint; i++) { // Create the left side
 					left_list.append(list.get(i));
 				}
@@ -211,46 +257,26 @@ public class LinkedList<T> implements Iterable<T> {
 					right_list.append(list.get(i));
 				}
 
-			//	long sd = System.currentTimeMillis();
-
-
 				// Here we sort each side //
 				sort(left_list);
 				sort(right_list);
-
-			//	long ed = System.currentTimeMillis();
-				//System.out.println("recurs" + (ed-sd));
 
 				int list_size = list.size();
 
 				list.clear();
 
-
-
-		//		long sl = System.currentTimeMillis();
-
-
+				//for(Integer num : list) {}
 				for (int i = 0; i < list_size; i++){
-
-			//		long sg = System.nanoTime();
 
 					T leftPointer = left_list.get(0);
 					T rightPointer = right_list.get(0);
 
-				//	long eg = System.nanoTime();
-				//	System.out.println("gets" + (eg-sg));
-
-				//	long sf = System.nanoTime();
 				 // compare //
 				 if ((leftPointer == null) || (rightPointer == null)){ // If one of the lists is empty we can't compare the heads so we simply make result 0
 					 result = 0;
 				 }
 				 else { result = comp.compare(leftPointer,rightPointer); } // Otherwise we compare the heads of the two lists
 
-			//	 long ef = System.nanoTime();
-				// System.out.println("if" + (ef-sf));
-
-			//	 long ssf = System.nanoTime();
 				 if (left_list.size() == 0) { // If the left list is empty we take the right lists head
 					 list.append(rightPointer);
 					 right_list.head = right_list.head.next;
@@ -269,21 +295,13 @@ public class LinkedList<T> implements Iterable<T> {
 					 list.append(rightPointer);
 					 right_list.head = right_list.head.next;
 				 }
-			//	 long esf = System.nanoTime();
-				// System.out.println("sif" + (esf-ssf));
 				}
-
-		//		long el = System.currentTimeMillis();
-			//	System.out.println("loop" + (el-sl));
 		}
-	//	long e = System.currentTimeMillis();
-	//	System.out.println("efjwep" + (e-s));
 	}
 
 		public void parallel_sort(LinkedList<T> list) {
 
-			_mutex.lock();
-			ExecutorService executorService = Executors.newFixedThreadPool(pool_size);
+			//ExecutorService executorService = Executors.newFixedThreadPool(pool_size);
 			int midpoint;
 			int result;
 			LinkedList<T> left_list = new LinkedList<T>();
@@ -308,45 +326,53 @@ public class LinkedList<T> implements Iterable<T> {
 					right_list.append(list.get(i));
 				}
 
-_mutex.unlock();
-//_mutex.lock();
-			executorService.execute(new Runnable() {
-			    public void run() {
+Future future1 = executorService.submit(new Callable() {
+			    public Object call() throws Exception {
+						_mutex.lock();
+						boolean psort = false;
 							if (num_threads < pool_size){
-								_mutex.lock();
+								psort = true;
 								num_threads++;
-								parallel_sort(left_list);
-								num_threads--;
-								_mutex.unlock();
 							}
-							else{
-								_mutex.lock();
-								sort(left_list);
-								_mutex.unlock();
+						_mutex.unlock();
+						if (psort = true){
+							parallel_sort(left_list);
+							num_threads--;
+						} else {
+							sort(left_list);
+						}
+						return null;
+			    }
+			});
+
+Future future2 = executorService.submit(new Runnable() {
+			    public void run() {
+						_mutex.lock();
+						boolean psort = false;
+							if (num_threads < pool_size){
+								psort = true;
+								num_threads++;
+							}
+						_mutex.unlock();
+						if (psort = true){
+							parallel_sort(right_list);
+							num_threads--;
+						} else {
+							sort(right_list);
 						}
 			    }
 			});
 
-//_mutex.unlock();
-//_mutex.lock();
-			executorService.execute(new Runnable() {
-			    public void run() {
-							if (num_threads < pool_size){
-								_mutex.lock();
-								num_threads++;
-								parallel_sort(right_list);
-								num_threads--;
-								_mutex.unlock();
-							}
-							else{
-								_mutex.lock();
-								sort(right_list);
-								_mutex.unlock();
-						}
-			    }
-			});
-//_mutex.unlock();
-_mutex.lock();
+			try {
+   			future1.get();
+			} catch (Exception ex) {
+   			//ex.getCause().printStackTrace();
+			}
+			try {
+				future2.get();
+			} catch (Exception ex) {
+				//ex.getCause().printStackTrace();
+			}
 
 			int list_size = list.size();
 			list.clear();
@@ -381,8 +407,8 @@ _mutex.lock();
 			 }
 			}
 	}
-_mutex.unlock();
-executorService.shutdown();
+
+
 	}
 }
 }

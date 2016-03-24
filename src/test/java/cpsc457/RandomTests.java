@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import org.hamcrest.CoreMatchers.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import java.util.*;
 
 @RunWith(JUnit4.class)
 public class RandomTests {
@@ -14,7 +15,7 @@ public class RandomTests {
     // This test provides the raw materials for profiling your merge sort
     @Test
     public void test_a_big_random_list() throws Exception {
-        Random r = new Random();
+		Random r = new Random();
         LinkedList<Integer> list = new LinkedList<Integer>();
 
 
@@ -22,51 +23,49 @@ public class RandomTests {
         list.append(2);
         list.append(1);
         list.append(21);
-  
-
-
+        //list.append(2); // If you put more then one elements in it freezes the program
 
         long start = System.currentTimeMillis();
-        /*
-       for(int i=0; i<1e3; i++) {
+
+       /*for(int i=0; i<2e5; i++) {
             list.append(r.nextInt());
-        }
-        */
+        }*/
 
 
-      System.err.println("===Starting List===");
-        for(int i = 0; i<list.size(); i++){
-          System.err.println(list.get(i));
-        }
+		//Iterator itr = list.iterator();
+		System.err.println("===Starting List===");
+		System.err.println(list.get(0));
+		for(Integer num : list) {
+			System.err.println(num);
+		}
 
-
+		//LinkedList.sort(list);
       LinkedList.par_sort(list);
       long end = System.currentTimeMillis();
 
         System.err.println("===Sorted List===");
-        for(int i = 0; i<list.size(); i++){
-         System.err.println(list.get(i));
-      }
+		System.err.println(list.get(0));
+		for(Integer num : list) {
+			System.err.println(num);
+		}
 
         System.err.println();
         System.err.println("Processors: "+Runtime.getRuntime().availableProcessors());
         System.err.println(end - start + " ms");
         System.err.println();
 
+		int i = 0;
         Integer prev = Integer.MIN_VALUE;
 
 	// fyi: this style of for loop use the result of getIterator()
 	//   hence the initial NullPointerException
-        //for(Integer num : list) {
-        for (int i = 0; i<list.size(); i++){
-
-            assertTrue(list.get(i) + " found before " + prev + " at index " + i, list.get(i) >= prev);
-            prev = list.get(i);
-        }
-
+        for(Integer num : list) {
+			assertTrue(num + " found before " + prev + " at index " + i, num >= prev);
+            prev = num;
+			i++;
     }
 
-}
+}}
     // these tests are primarilly (but not exclusively)
     // how we will evaluate the correctness of your code
 
