@@ -163,6 +163,11 @@ public class LinkedList<T> implements Iterable<T> {
 		//Variables (attributes)
 			//ExecutorService
 			//Depth limit
+			int pool_size = 2;
+			int num_threads = 0;
+
+
+			private final Lock _mutex = new ReentrantLock(true);
 
 		//Comparison function
 		final Comparator<T> comp;
@@ -276,12 +281,17 @@ public class LinkedList<T> implements Iterable<T> {
 	}
 
 		public void parallel_sort(LinkedList<T> list) {
-			ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+			_mutex.lock();
+			ExecutorService executorService = Executors.newFixedThreadPool(pool_size);
 			int midpoint;
 			int result;
 			LinkedList<T> left_list = new LinkedList<T>();
 			LinkedList<T> right_list = new LinkedList<T>();
 
+			if(list.size() == 0) {
+
+			}
 
 			if(list.size() == 1) {
 			}
@@ -298,24 +308,45 @@ public class LinkedList<T> implements Iterable<T> {
 					right_list.append(list.get(i));
 				}
 
-
+_mutex.unlock();
+//_mutex.lock();
 			executorService.execute(new Runnable() {
 			    public void run() {
-			        sort(left_list);
-							//right_list.sort();
+							if (num_threads < pool_size){
+								_mutex.lock();
+								num_threads++;
+								parallel_sort(left_list);
+								num_threads--;
+								_mutex.unlock();
+							}
+							else{
+								_mutex.lock();
+								sort(left_list);
+								_mutex.unlock();
+						}
 			    }
 			});
 
-
-
+//_mutex.unlock();
+//_mutex.lock();
 			executorService.execute(new Runnable() {
 			    public void run() {
-			        //left_list.sort();
-							sort(right_list);
+							if (num_threads < pool_size){
+								_mutex.lock();
+								num_threads++;
+								parallel_sort(right_list);
+								num_threads--;
+								_mutex.unlock();
+							}
+							else{
+								_mutex.lock();
+								sort(right_list);
+								_mutex.unlock();
+						}
 			    }
 			});
-
-
+//_mutex.unlock();
+_mutex.lock();
 
 			int list_size = list.size();
 			list.clear();
@@ -350,7 +381,7 @@ public class LinkedList<T> implements Iterable<T> {
 			 }
 			}
 	}
-
+_mutex.unlock();
 executorService.shutdown();
 	}
 }

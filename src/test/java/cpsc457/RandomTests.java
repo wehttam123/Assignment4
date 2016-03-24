@@ -17,35 +17,37 @@ public class RandomTests {
         Random r = new Random();
         LinkedList<Integer> list = new LinkedList<Integer>();
 
-        /*
+
         list.append(3);
         list.append(2);
         list.append(1);
         list.append(21);
-        list.append(1);
+  
 
-        */
+
 
         long start = System.currentTimeMillis();
+        /*
        for(int i=0; i<1e3; i++) {
             list.append(r.nextInt());
         }
+        */
 
-/*
-      System.out.println("===Starting List===");
+
+      System.err.println("===Starting List===");
         for(int i = 0; i<list.size(); i++){
-          System.out.println(list.get(i));
+          System.err.println(list.get(i));
         }
 
-*/
-      LinkedList.sort(list);
+
+      LinkedList.par_sort(list);
       long end = System.currentTimeMillis();
 
-/*        System.out.println("===Sorted List===");
+        System.err.println("===Sorted List===");
         for(int i = 0; i<list.size(); i++){
-         System.out.println(list.get(i));
+         System.err.println(list.get(i));
       }
-*/
+
         System.err.println();
         System.err.println("Processors: "+Runtime.getRuntime().availableProcessors());
         System.err.println(end - start + " ms");
@@ -64,11 +66,11 @@ public class RandomTests {
 
     }
 
-
+}
     // these tests are primarilly (but not exclusively)
     // how we will evaluate the correctness of your code
 
-
+/*
     @Test
     public void sort_lots_of_small_random_lists_in_serial() {
         Random r = new Random();
@@ -117,6 +119,7 @@ public class RandomTests {
             i++;
         }
     }
+  }
 
     private void dumpTest(int [] input) {
         StringBuilder buf = new StringBuilder();
@@ -147,3 +150,4 @@ public class RandomTests {
 
 
 }
+*/
