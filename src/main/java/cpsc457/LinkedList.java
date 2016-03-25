@@ -28,6 +28,7 @@ public class LinkedList<T> implements Iterable<T> {
         });
     }
 
+    
     public static <T extends Comparable<T>> void sort(LinkedList<T> list){
         list.sort(new Comparator<T>() {
             @Override
